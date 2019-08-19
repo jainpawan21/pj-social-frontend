@@ -1,7 +1,6 @@
 import React, {Component} from 'react'
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
-
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button'
@@ -13,6 +12,8 @@ import PropTypes from 'prop-types'
 import {withStyles} from '@material-ui/core/styles'
 import IconButton from '@material-ui/core/IconButton'
 import PhotoCamera from '@material-ui/icons/PhotoCamera'
+import axios from '../../constants/Axios';
+import authToken from '../../constants/AuthToken';
 
 const styles = theme => ({
   root: {
@@ -58,12 +59,43 @@ const styles = theme => ({
 class PostCreate extends Component {
   state = {
     text: '',
-    photo: '',
+    file: {},
     error: '',
     user: {}
   }
 
-  
+   addPost = async (e) => {
+    e.preventDefault()
+    const formData = new FormData();
+    formData.append('photo',this.state.file);
+    const resFirst = await axios.post('uploadphoto' ,formData,{
+      headers: {
+        "Authorization": authToken,
+        "content-type": "multipart/form-data"
+      }
+    })
+    console.log(resFirst.data.toString())
+    
+    const resSecond = await axios.post('post',{
+      text: this.state.text,
+      photo: resFirst.data
+    },{
+      headers: {
+        "Authorization" : authToken
+      }
+    })
+
+    console.log(resSecond)
+
+    const res = await axios.get('posts',{
+      headers: {
+        "Authorization": authToken
+      }
+    })
+
+    console.log(res)
+  }
+
   render() {
     const {classes} = this.props
     return (<div className={classes.root}>
@@ -81,16 +113,18 @@ class PostCreate extends Component {
             multiline
             rows="2"
             value={this.state.text}
-            // onChange={this.handleChange('text')}
+            onChange={(e) => this.setState({text: e.target.value})}
             className={classes.textField}
             margin="normal"
         />
-        <input accept="image/*" className={classes.input} id="icon-button-file" type="file" />
+        
+        <input accept="image/*" className={classes.input} id="icon-button-file" type="file" name="photo" onChange={(e) => this.setState({file: e.target.files[0]})}/>
         <label htmlFor="icon-button-file">
           <IconButton color="secondary" className={classes.photoButton} component="span">
             <PhotoCamera />
           </IconButton>
-        </label> <span className={classes.filename}>{this.state.photo ? this.state.photo.name : ''}</span>
+
+        </label><span className={classes.filename}>{this.state.file ? this.state.file.name: ''}</span>
         { this.state.error && (<Typography component="p" color="error">
             <Icon color="error" className={classes.error}>error</Icon>
               {this.state.error}
@@ -98,7 +132,7 @@ class PostCreate extends Component {
         }
       </CardContent>
       <CardActions>
-        <Button color="primary" variant="raised" disabled={false} className={classes.submit}>POST</Button>
+        <Button color="primary" variant="contained" disabled={false} className={classes.submit} onClick={(e) => this.addPost(e)}>POST</Button>
       </CardActions>
     </Card>
   </div>)
