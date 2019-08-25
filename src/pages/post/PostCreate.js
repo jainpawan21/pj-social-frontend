@@ -2,7 +2,6 @@ import React, {Component} from 'react'
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 import Typography from '@material-ui/core/Typography'
@@ -16,15 +15,10 @@ import axios from '../../constants/Axios';
 import authToken from '../../constants/AuthToken';
 
 const styles = theme => ({
-  root: {
-    backgroundColor: '#efefef',
-    padding: `${theme.spacing.unit*3}px 0px 1px`
-  },
   card: {
-    maxWidth:600,
-    margin: 'auto',
-    marginBottom: theme.spacing.unit*3,
-    boxShadow: 'none'
+    maxWidth:660,
+    marginTop: theme.spacing.unit * 2,
+    boxShadow: '#707070'
   },
   cardContent: {
     backgroundColor: 'white',
@@ -33,24 +27,22 @@ const styles = theme => ({
   },
   cardHeader: {
     paddingLeft: 30,
-    paddingTop: 8,
-    paddingBottom: 8
+    paddingTop: 10,
+    paddingBottom: 4
   },
   photoButton: {
     height: 10,
-    marginBottom: 2
+    marginBottom: 0
   },
   input: {
     display: 'none',
   },
   textField: {
-    marginLeft: theme.spacing.unit*2,
-    marginRight: theme.spacing.unit*2,
+    marginLeft: theme.spacing.unit*1,
+    marginRight: theme.spacing.unit*1,
     width: '90%'
   },
-  submit: {
-    margin: theme.spacing.unit,
-  },
+  
   filename:{
     verticalAlign: 'super'
   }
@@ -98,7 +90,7 @@ class PostCreate extends Component {
 
   render() {
     const {classes} = this.props
-    return (<div className={classes.root}>
+    return (<div >
       <Card className={classes.card}>
       <CardHeader
             avatar={
@@ -109,9 +101,9 @@ class PostCreate extends Component {
           />
       <CardContent className={classes.cardContent}>
         <TextField
-            placeholder="Share your thoughts ..."
+            placeholder="Write Something..."
             multiline
-            rows="2"
+            rows="1"
             value={this.state.text}
             onChange={(e) => this.setState({text: e.target.value})}
             className={classes.textField}
@@ -126,14 +118,15 @@ class PostCreate extends Component {
 
         </label><span className={classes.filename}>{this.state.file ? this.state.file.name: ''}</span>
         { this.state.error && (<Typography component="p" color="error">
-            <Icon color="error" className={classes.error}>error</Icon>
+            <Icon color="primary" className={classes.error}>error</Icon>
               {this.state.error}
             </Typography>)
         }
+     
+        <div style={{textAlign: 'center'}} >
+        <Button color="primary" variant="contained" disabled={false} onClick={(e) => this.addPost(e)}>POST</Button>
+        </div>
       </CardContent>
-      <CardActions>
-        <Button color="primary" variant="contained" disabled={false} className={classes.submit} onClick={(e) => this.addPost(e)}>POST</Button>
-      </CardActions>
     </Card>
   </div>)
   }
